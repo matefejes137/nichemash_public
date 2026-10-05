@@ -1,0 +1,21 @@
+[
+  {
+    "name": "nichemash.com.",
+    "type": "A",
+    "ttl": 300,
+    "rrdatas": [
+      "185.199.108.153",
+      "185.199.109.153",
+      "185.199.110.153",
+      "185.199.111.153"
+    ]
+  },
+  {
+    "name": "www.nichemash.com.",
+    "type": "CNAME",
+    "ttl": 300,
+    "rrdatas": [
+      "matefejes137.github.io."
+    ]
+  }
+]
