@@ -1,7 +1,7 @@
 # Registers nichemash.com on GitHub Pages and requests TLS (requires: gh auth login).
 $ErrorActionPreference = "Stop"
 
-$repo = "matefejes137/nichemash_public"
+$repo = "bsc137/nichemash_public"
 
 Write-Host "Configuring Pages custom domain and HTTPS for $repo ..."
 

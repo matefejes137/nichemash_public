@@ -1,4 +1,4 @@
-# Points nichemash.com (apex + www) at GitHub Pages for matefejes137/nichemash_public.
+# Points nichemash.com (apex + www) at GitHub Pages for bsc137/nichemash_public.
 # Authoritative DNS for nichemash.com lives in Google Cloud DNS (Dynadot delegates NS there).
 param(
   [string]$Project = "nichemash-prod-509122",
@@ -16,12 +16,12 @@ Write-Host "Updating apex A in Cloud DNS zone $Zone (project $Project)..."
 Write-Host "Ensuring www CNAME..."
 $create = & $gcloud dns record-sets create "www.nichemash.com." `
   --zone=$Zone --project=$Project --type=CNAME --ttl=300 `
-  --rrdatas="matefejes137.github.io." 2>&1
+  --rrdatas="bsc137.github.io." 2>&1
 if ($LASTEXITCODE -ne 0) {
   if ($create -match "already exists") {
     & $gcloud dns record-sets update "www.nichemash.com." `
       --zone=$Zone --project=$Project --type=CNAME --ttl=300 `
-      --rrdatas="matefejes137.github.io."
+      --rrdatas="bsc137.github.io."
   } else {
     throw $create
   }
