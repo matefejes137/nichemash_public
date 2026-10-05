@@ -6,14 +6,25 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$here = Split-Path -Parent $MyInvocation.MyCommand.Path
-$rrsets = Join-Path $here "gcp-dns-github-pages-apex.json"
-$apply = "C:\Users\Admin\nichemash\.local\dns-migrate\apply-rrsets.ps1"
+$gcloud = "gcloud"
 
-if (-not (Test-Path $apply)) {
-  throw "Missing $apply"
+Write-Host "Updating apex A in Cloud DNS zone $Zone (project $Project)..."
+& $gcloud dns record-sets update "nichemash.com." `
+  --zone=$Zone --project=$Project --type=A --ttl=300 `
+  --rrdatas="185.199.108.153,185.199.109.153,185.199.110.153,185.199.111.153"
+
+Write-Host "Ensuring www CNAME..."
+$create = & $gcloud dns record-sets create "www.nichemash.com." `
+  --zone=$Zone --project=$Project --type=CNAME --ttl=300 `
+  --rrdatas="matefejes137.github.io." 2>&1
+if ($LASTEXITCODE -ne 0) {
+  if ($create -match "already exists") {
+    & $gcloud dns record-sets update "www.nichemash.com." `
+      --zone=$Zone --project=$Project --type=CNAME --ttl=300 `
+      --rrdatas="matefejes137.github.io."
+  } else {
+    throw $create
+  }
 }
 
-Write-Host "Updating apex + www in Cloud DNS zone $Zone (project $Project)..."
-& $apply -Project $Project -Zone $Zone -File $rrsets
 Write-Host "Done. Allow a few minutes for DNS propagation, then verify https://nichemash.com"
