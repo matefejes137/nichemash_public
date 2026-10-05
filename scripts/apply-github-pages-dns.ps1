@@ -27,4 +27,16 @@ if ($LASTEXITCODE -ne 0) {
   }
 }
 
-Write-Host "Done. Allow a few minutes for DNS propagation, then verify https://nichemash.com"
+Write-Host "Removing stale GCP ACME record (blocks GitHub Pages TLS) if present..."
+& $gcloud dns record-sets delete "_acme-challenge.nichemash.com." `
+  --zone=$Zone --project=$Project --type=CNAME --quiet 2>$null
+
+Write-Host "Adding GitHub Pages AAAA records (optional IPv6)..."
+$aaaaCreate = & $gcloud dns record-sets create "nichemash.com." `
+  --zone=$Zone --project=$Project --type=AAAA --ttl=300 `
+  --rrdatas="2606:50c0:8000::153,2606:50c0:8001::153,2606:50c0:8002::153,2606:50c0:8003::153" 2>&1
+if ($LASTEXITCODE -ne 0 -and $aaaaCreate -notmatch "already exists") {
+  Write-Host $aaaaCreate
+}
+
+Write-Host "Done. Run scripts/enable-github-pages-https.ps1 (after gh auth login), then verify https://nichemash.com"
